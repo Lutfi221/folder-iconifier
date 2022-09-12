@@ -119,7 +119,7 @@ def set_folder_icon(folder_path: str, ico_path: str):
 
 
 def main():
-    print('Folder path to be given emoji icon (drag & drop supported)')
+    print('\nFolder path to be given emoji icon (drag & drop supported)')
     folder_path = input(' > ')
     folder_path = process_path_input(folder_path)
 
@@ -143,4 +143,5 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
+    while True:
+        main()
