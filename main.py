@@ -140,6 +140,8 @@ def main():
     hide_file(emoji_ico_path)
 
     set_folder_icon(folder_path, emoji_ico_path)
+    # Without this command, windows won't refresh the icon immediately
+    os.system('attrib +r "{}"'.format(folder_path))
 
 
 if __name__ == '__main__':
