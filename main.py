@@ -1,6 +1,7 @@
 import os
 import re
-from itertools import filterfalse
+
+from set_icon import set_icon
 
 EMOJIS_DIR = 'D:\\resources\\icons\\noto emoji\\noto-png\\'
 
@@ -71,54 +72,6 @@ def delete_old_emojifier_icons(folder_path: str):
             os.remove(os.path.join(folder_path, filename))
 
 
-def set_folder_icon(folder_path: str, ico_path: str):
-    """Modify or create the 'desktop.ini' of the folder
-
-    Args:
-        folder_path (str): Path to folder
-        ico_path (str): Path to ico file
-    """
-    desktop_ini_path = os.path.join(folder_path, 'desktop.ini')
-
-    if os.path.isfile(desktop_ini_path):
-        icon_entry_pattern = re.compile('Icon.+=.+')
-
-        def is_icon_entry(line: str) -> bool:
-            return icon_entry_pattern.match(line)
-
-        with open(desktop_ini_path, 'r+') as f:
-            lines = f.readlines()
-
-            # Removes lines that are icon entries,
-            # such as 'IconIndex', or 'IconFile'
-            filtered_lines = list(filterfalse(is_icon_entry, lines))
-
-            shell_info_index = -1
-
-            for i, line in enumerate(filtered_lines):
-                if '[.ShellClassInfo]' in line:
-                    shell_info_index = i
-                    break
-            if shell_info_index == -1:
-                filtered_lines.insert(0, '[.ShellClassInfo]\n')
-                shell_info_index = 0
-
-            # Inserts 'IconResource' entry under '[.ShellClassInfo]'
-            filtered_lines.insert(shell_info_index + 1,
-                                  'IconResource="{}",0\n'.format(ico_path))
-
-            f.seek(0)
-            f.truncate(0)
-            f.writelines(filtered_lines)
-        return
-
-    content = '[.ShellClassInfo]' + \
-        '\nIconResource="{}",0\n'.format(ico_path)
-    with open(desktop_ini_path, 'w') as f:
-        f.write(content)
-    hide_file(desktop_ini_path)
-
-
 def main():
     print('\nFolder path to be given emoji icon (drag & drop supported)')
     folder_path = input(' > ')
@@ -140,7 +93,7 @@ def main():
     png_to_ico(emoji_png_path, emoji_ico_path)
     hide_file(emoji_ico_path)
 
-    set_folder_icon(folder_path, emoji_ico_path)
+    set_icon(folder_path, emoji_ico_path)
     # Without this command, windows won't refresh the icon immediately
     os.system('attrib +r "{}"'.format(folder_path))
 
