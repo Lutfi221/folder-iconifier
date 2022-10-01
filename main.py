@@ -62,13 +62,13 @@ def hide_file(file_path: str):
     os.system('attrib +s +h "{}"'.format(file_path))
 
 
-def delete_old_emojifier_icons(folder_path: str):
-    """Delete old emojifier icons within the directory
+def delete_old_iconifier_icons(folder_path: str):
+    """Delete old iconifier icons within the directory
 
     Args:
         folder_path (str): Path to directory
     """
-    p = re.compile('emojifier.+\.ico')
+    p = re.compile(r'(iconifier|emojifier).+\.ico')
     filenames = os.listdir(folder_path)
     for filename in filenames:
         if p.match(filename):
@@ -117,13 +117,13 @@ def main():
 
         emoji_png_path = os.path.join(EMOJIS_DIR, emoji_png_filename)
         ico_path = os.path.join(
-            folder_path, 'emojifier {}.ico'.format(emoji_png_filename[:-4]))
+            folder_path, 'iconifier {}.ico'.format(emoji_png_filename[:-4]))
 
         png_to_ico(emoji_png_path, ico_path)
 
     hide_file(ico_path)
 
-    delete_old_emojifier_icons(folder_path)
+    delete_old_iconifier_icons(folder_path)
     set_icon(folder_path, ico_path)
     # Without this command, windows won't refresh the icon immediately
     os.system('attrib +r "{}"'.format(folder_path))
