@@ -42,11 +42,11 @@ def find_emoji_filename(emoji_codepoint: str) -> str:
         'Cannot find emoji png for codepoint \'{}\''.format(emoji_codepoint))
 
 
-def png_to_ico(png_path: str, ico_path: str):
-    """Convert png to ico
+def convert_to_ico(png_path: str, ico_path: str):
+    """Convert file to ico
 
     Args:
-        png_path (str): Path to png file
+        source_path (str): Path to image file
         ico_path (str): Path to ico file
     """
     os.system('magick convert "{}" -define icon:auto-resize=256,128,96,64,48,32,24,16 "{}"'.format(
@@ -92,7 +92,7 @@ def download_to_ico(url: str, destination_ico_path: str):
 
     open(temp_filepath, 'wb').write(r.content)
 
-    png_to_ico(temp_filepath, destination_ico_path)
+    convert_to_ico(temp_filepath, destination_ico_path)
     os.remove(temp_filepath)
 
 
@@ -107,9 +107,10 @@ def main():
 
     if (is_url(user_input)):
         ico_path = os.path.join(folder_path, 'iconifier download.ico')
+        delete_old_iconifier_icons(folder_path)
         download_to_ico(user_input, ico_path)
     else:
-        emoji_codepoint = emoji_input_to_codepoint()
+        emoji_codepoint = emoji_input_to_codepoint(user_input)
         emoji_png_filename = find_emoji_filename(emoji_codepoint)
 
         print('codepoint: {}'.format(emoji_codepoint))
@@ -119,13 +120,13 @@ def main():
         ico_path = os.path.join(
             folder_path, 'iconifier {}.ico'.format(emoji_png_filename[:-4]))
 
-        png_to_ico(emoji_png_path, ico_path)
+        delete_old_iconifier_icons(folder_path)
+        convert_to_ico(emoji_png_path, ico_path)
 
     hide_file(ico_path)
-
-    delete_old_iconifier_icons(folder_path)
     set_icon(folder_path, ico_path)
-    # Without this command, windows won't refresh the icon immediately
+
+    # This command might help update the icon to display on explorer
     os.system('attrib +r "{}"'.format(folder_path))
 
 
