@@ -20,7 +20,7 @@ def find_emoji_filename(emoji_codepoint: str, emojis_dir: str) -> str:
         str: Emoji png filename
     """
     for filename in os.listdir(emojis_dir):
-        if filename.startswith(emoji_codepoint):
+        if emoji_codepoint in filename:
             return filename
     raise Exception(
         'Cannot find emoji png for codepoint \'{}\''.format(emoji_codepoint))
