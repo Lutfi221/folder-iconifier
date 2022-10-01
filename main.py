@@ -1,5 +1,8 @@
 import os
+from random import randint
 import re
+
+import requests
 
 from set_icon import set_icon
 
@@ -72,28 +75,56 @@ def delete_old_emojifier_icons(folder_path: str):
             os.remove(os.path.join(folder_path, filename))
 
 
+def is_url(s: str) -> bool:
+    """Checks if a string is a valid url"""
+    # https://regexr.com/39nr7
+    p = re.compile(
+        r'[(http(s)?):\/\/(www\.)?a-zA-Z0-9@:%._\+~#=]{2,256}' +
+        r'\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)')
+    return bool(p.match(s))
+
+
+def download_to_ico(url: str, destination_ico_path: str):
+    r = requests.get(url, allow_redirects=True)
+    destination_dirpath = os.path.split(destination_ico_path)[0]
+    temp_filepath = os.path.join(
+        destination_dirpath, 'temp iconifier {}'.format(randint(0, 9999)))
+
+    open(temp_filepath, 'wb').write(r.content)
+
+    png_to_ico(temp_filepath, destination_ico_path)
+    os.remove(temp_filepath)
+
+
 def main():
     print('\nFolder path to be given emoji icon (drag & drop supported)')
     folder_path = input(' > ')
     folder_path = process_path_input(folder_path)
 
-    print('\nEmoji character')
+    print('\nEmoji character or an icon URL (.png .ico)')
 
-    emoji_codepoint = emoji_input_to_codepoint(input(' > '))
-    emoji_png_filename = find_emoji_filename(emoji_codepoint)
+    user_input = input(' > ')
 
-    print('codepoint: {}'.format(emoji_codepoint))
-    print('filename: {}'.format(emoji_png_filename))
+    if (is_url(user_input)):
+        ico_path = os.path.join(folder_path, 'iconifier download.ico')
+        download_to_ico(user_input, ico_path)
+    else:
+        emoji_codepoint = emoji_input_to_codepoint()
+        emoji_png_filename = find_emoji_filename(emoji_codepoint)
 
-    emoji_png_path = os.path.join(EMOJIS_DIR, emoji_png_filename)
-    emoji_ico_path = os.path.join(
-        folder_path, 'emojifier {}.ico'.format(emoji_png_filename[:-4]))
+        print('codepoint: {}'.format(emoji_codepoint))
+        print('filename: {}'.format(emoji_png_filename))
+
+        emoji_png_path = os.path.join(EMOJIS_DIR, emoji_png_filename)
+        ico_path = os.path.join(
+            folder_path, 'emojifier {}.ico'.format(emoji_png_filename[:-4]))
+
+        png_to_ico(emoji_png_path, ico_path)
+
+    hide_file(ico_path)
 
     delete_old_emojifier_icons(folder_path)
-    png_to_ico(emoji_png_path, emoji_ico_path)
-    hide_file(emoji_ico_path)
-
-    set_icon(folder_path, emoji_ico_path)
+    set_icon(folder_path, ico_path)
     # Without this command, windows won't refresh the icon immediately
     os.system('attrib +r "{}"'.format(folder_path))
 
