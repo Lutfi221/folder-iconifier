@@ -8,4 +8,7 @@ __pycache__/
 
 .vscode
 
+# Generated markdown files
+README*.html
+
 /config.json
