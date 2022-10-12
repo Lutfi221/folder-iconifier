@@ -2,6 +2,8 @@
 
 Folder Iconifier helps you customize your folder icons with just a couple of drags and presses. You can use emojis, pngs, and icons from the internet for your folders.
 
+![Before and after of the folders' icons](docs/assets/images/before-after.png)
+
 - [Folder Iconifier 🎨](#folder-iconifier-)
 - [Usage](#usage)
 - [Requirements](#requirements)
