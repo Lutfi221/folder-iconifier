@@ -1,8 +1,11 @@
+from genericpath import isfile
 import os
 from random import randint
 import re
 
 import requests
+
+from exceptions import ConvertionError
 
 
 def process_path_input(path: str) -> str:
@@ -13,16 +16,19 @@ def process_path_input(path: str) -> str:
     return output
 
 
-def convert_to_ico(png_path: str, ico_path: str):
+def convert_to_ico(image_path: str, ico_path: str):
     """Convert file to ico
 
     Args:
-        source_path (str): Path to image file
+        image_path (str): Path to image file
         ico_path (str): Path to ico file
     """
-    os.system('magick convert "{}" -define '.format(png_path) +
-              'icon:auto-resize=' +
-              '256,128,96,64,48,32,24,16 "{}"'.format(ico_path))
+    cmd_str = 'magick convert "{}" -define '.format(image_path) + \
+        'icon:auto-resize=' + \
+        '256,128,96,64,48,32,24,16 "{}"'.format(ico_path)
+    os.system(cmd_str)
+    if not os.path.isfile(ico_path):
+        raise ConvertionError(cmd_str)
 
 
 def hide_file(file_path: str):
