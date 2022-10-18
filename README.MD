@@ -33,3 +33,5 @@ These are some examples of valid inputs:
 # Requirements
 
 - [ImageMagick](https://imagemagick.org/script/download.php)
+- Python Modules
+  - [requests](https://pypi.org/project/requests/) — `python -m pip install requests`
