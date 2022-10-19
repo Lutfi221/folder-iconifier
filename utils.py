@@ -5,7 +5,7 @@ import re
 
 import requests
 
-from exceptions import ConvertionError
+from exceptions import ConvertionError, FolderNotFound
 
 
 def process_path_input(path: str) -> str:
@@ -13,6 +13,8 @@ def process_path_input(path: str) -> str:
     output = path
     if '"' in path:
         output = path[1:-1]
+    if not os.path.isdir(output):
+        raise FolderNotFound(output)
     return output
 
 
